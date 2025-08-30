@@ -1,0 +1,61 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345678
+      - MYSQL_DATABASE=magnet_Search
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=12345678
+    volumes:
+      - Magnet_Search_db_vol:/var/lib/mysql:rw
+      - ./compose/mysql/conf/my.cnf:/etc/mysql/my.cnf
+      - ./compose/mysql/init:/docker-entrypoint-initdb.d/
+    ports:
+      - "3306:3306"
+    restart: always
+    networks:
+      - app-network
+
+  web:
+    build: ./Magnet_Search
+    expose:
+      - "8000"
+    volumes:
+      - ./Magnet_Search:/var/www/html/Magnet_Search
+      - Magnet_Search_media_vol:/var/www/html/Magnet_Search/media
+      - ./compose/uwsgi:/tmp
+    environment:
+      - DEBUG=False
+    depends_on:
+      - db
+    restart: always
+    tty: true
+    stdin_open: true
+    networks:
+      - app-network
+
+  nginx:
+    build: ./compose/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Magnet_Search/static:/usr/share/nginx/html/static
+      - ./compose/nginx/ssl:/usr/share/nginx/ssl
+      - ./compose/nginx/log:/var/log/nginx
+      - Magnet_Search_media_vol:/usr/share/nginx/html/media
+    depends_on:
+      - web
+    restart: always
+    networks:
+      - app-network
+
+volumes:
+  Magnet_Search_db_vol:
+  Magnet_Search_media_vol:
+
+networks:
+  app-network:
+    driver: bridge

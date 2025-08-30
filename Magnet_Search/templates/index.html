@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- 分类区域 -->
+<section class="categories-section">
+    <h2 class="section-title">资源分类</h2>
+
+    <div class="categories-grid">
+        {% for article_type, articles_list in articles.items %}
+        <div class="category-card">
+            {% if articles_list.icon %}
+                <div class="category-icon">
+                    <i class="{{ articles_list.icon }}"></i>
+                </div>
+            {% endif %}
+
+            <h3 class="category-title">{{ article_type }}</h3>
+            <ul class="resource-list">
+                {% if articles_list %}
+                    {% for article in articles_list.articles %}
+                    <li class="resource-item">
+                        <a href="{% url 'detail' article_id=article.id %}" class="resource-link">
+                            <i class="fas fa-file-alt"></i>
+                            {% if article.title|length > 30 %}
+                                {{ article.title|slice:":30" }}...
+                            {% else %}
+                                {{ article.title }}
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+            <div class="more-link-container">
+                {% if articles_list and articles_list.articles|length >= 5 %}
+                <a href="{% url 'list' category_id=articles_list.type_id page=1 %}" class="more-link">更多{{article_type}}资源 ></a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<style>
+    /* 分类区域样式 */
+    .categories-section {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 30px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+        text-align: center;
+        background: linear-gradient(45deg, #fff, #ff8a00);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .category-card {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    .category-icon {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .category-icon i {
+        font-size: 2.5rem;
+        color: #ff8a00;
+    }
+
+    .category-title {
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+        text-align: center;
+        color: #fff;
+    }
+
+    .resource-list {
+        list-style: none;
+        margin-bottom: 15px;
+        flex-grow: 1;
+    }
+
+    .resource-item {
+        margin-bottom: 8px;
+    }
+
+    .resource-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .resource-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+
+    .resource-link i {
+        color: #ff8a00;
+    }
+
+    .more-link-container {
+        margin-top: auto;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .more-link {
+        display: block;
+        text-align: center;
+        color: #ff8a00;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        padding: 8px 12px;
+        border-radius: 6px;
+    }
+
+    .more-link:hover {
+        color: #fff;
+        background: rgba(255, 138, 0, 0.2);
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+        .categories-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
