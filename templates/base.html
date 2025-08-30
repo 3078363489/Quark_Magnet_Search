@@ -879,8 +879,9 @@
 
         </footer>
     </div>
-
+    {{ Site_Information.footer_content |safe}}
     <!-- JavaScript -->
+    {{ Site_Information.analytics_code |safe}}
     <script>
         // 返回功能
         function goBack() {
