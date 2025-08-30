@@ -95,6 +95,7 @@ CSRF_TRUSTED_ORIGINS = [
 https://域名/quark/qurak_Cache/定时删除夸克转存文件
 
 默认1小时清理一次（可在 `./quark/views.py` 中配置）
+timezone.now() - timedelta(hours=1)中的1表示1小时
 ```
 
 ### 采集接口
@@ -105,10 +106,10 @@ https://域名/API/article_create/
 
 采集接口的密钥在后台Keys中设置
 
-
-```
 [https://github.com/user-attachments/assets/8c736666-4dc4-4b4f-acb6-09f2f535159b](https://github.com/user-attachments/assets/8c736666-4dc4-4b4f-acb6-09f2f535159b)  
 _火车头采集器配置示例_
+```
+
 ## 资源文件
 
 当前目录下提供：
@@ -120,8 +121,7 @@ _火车头采集器配置示例_
 
 ## 项目结构
 
-text
-
+```text
 Quark_Magnet_Search/
 ├── Magnet_Search/
 │   ├── settings.py      # 项目配置
@@ -131,5 +131,6 @@ Quark_Magnet_Search/
 │   └── ...
 ├── API/                 # API接口
 └── ...                  # 其他模块
+```
 
 网址预览:http://quark.marketingw.cn/
