@@ -142,6 +142,8 @@
     .resource-main {
         min-width: 0;
         order: 2;
+        width: 100%;
+        overflow: hidden;
     }
 
     .resource-sidebar {
@@ -160,17 +162,21 @@
         padding: 15px;
         background: rgba(0, 0, 0, 0.1);
         border-radius: 12px;
+        flex-wrap: wrap;
     }
 
     .resource-icon {
         font-size: 2.5rem;
         color: #ff8a00;
+        flex-shrink: 0;
     }
 
     .resource-title {
         font-size: 1.5rem;
         margin: 0 0 10px 0;
         color: #fff;
+        word-break: break-word;
+        overflow-wrap: break-word;
     }
 
     .resource-meta {
@@ -186,30 +192,33 @@
         padding: 4px 10px;
         border-radius: 15px;
         color: #ff8a00;
+        white-space: nowrap;
     }
 
     .file-size, .file-date {
         display: flex;
         align-items: center;
         gap: 5px;
+        white-space: nowrap;
     }
+
     /* 主要内容布局 */
+    .resource-main {
+        order: 1; /* 移动端优先：文章内容在上 */
+    }
 
-
-        .resource-main {
-            order: 1; /* 移动端优先：文章内容在上 */
-        }
-
-        .resource-sidebar {
-            order: 2; /* 移动端优先：下载区域在下 */
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+    .resource-sidebar {
+        order: 2; /* 移动端优先：下载区域在下 */
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
 
     /* 资源描述样式 */
     .resource-description {
         margin-bottom: 25px;
+        width: 100%;
+        overflow: hidden;
     }
 
     .resource-description h3 {
@@ -225,6 +234,41 @@
         padding: 20px;
         border-radius: 12px;
         line-height: 1.6;
+        width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    /* 修复内容溢出问题 */
+    .Post-body * {
+        max-width: 100%;
+    }
+
+    .Post-body img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .Post-body table {
+        width: 100%;
+        overflow-x: auto;
+        display: block;
+    }
+
+    .Post-body pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow-x: auto;
+    }
+
+    .Post-body code {
+        word-break: break-all;
+        white-space: pre-wrap;
+    }
+
+    .Post-body iframe {
+        max-width: 100%;
     }
 
     /* 相关资源样式 */
@@ -261,6 +305,7 @@
         padding: 8px 12px;
         border-radius: 6px;
         transition: all 0.2s ease;
+        word-break: break-word;
     }
 
     .related-list a:hover {
@@ -429,6 +474,14 @@
 
         .download-title {
             font-size: 1.2rem;
+        }
+
+        .Post-body {
+            padding: 15px;
+        }
+
+        .resource-title {
+            font-size: 1.3rem;
         }
     }
 </style>
