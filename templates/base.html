@@ -50,15 +50,117 @@
             min-height: 100vh;
             background: var(--primary-gradient);
             background-attachment: fixed;
+            display: flex;
         }
 
         .container {
+            flex: 1;
             max-width: 1200px;
             margin: 0 auto;
             padding: var(--spacing-sm);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        /* 导航栏样式 - 移动端优化 */
+        /* 右侧边栏导航样式 */
+        .sidebar-nav {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 280px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            padding: var(--spacing-md);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.4s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: var(--secondary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .close-sidebar:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-links {
+            list-style: none;
+            flex: 1;
+        }
+
+        .sidebar-links li {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .sidebar-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .sidebar-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-links a.active {
+            background: var(--secondary-gradient);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: var(--spacing-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* 顶部导航栏样式 - 简化版 */
         .main-nav {
             background: var(--card-bg);
             border-radius: var(--border-radius);
@@ -70,10 +172,9 @@
             justify-content: space-between;
             align-items: center;
             animation: slideInDown 0.5s ease forwards;
-            position: relative;
         }
 
-        .nav-left, .nav-right {
+        .nav-left {
             display: flex;
             align-items: center;
             gap: var(--spacing-md);
@@ -85,32 +186,12 @@
             background: var(--secondary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            white-space: nowrap;
         }
 
-        .nav-links {
-            display: flex;
-            gap: var(--spacing-sm);
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--text-light);
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            transition: var(--transition);
+        .nav-right {
             display: flex;
             align-items: center;
-            gap: 8px;
-        }
-
-        .nav-links a:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-links a.active {
-            background: var(--secondary-gradient);
+            gap: var(--spacing-sm);
         }
 
         .back-btn {
@@ -130,86 +211,22 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* 汉堡菜单按钮 */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            justify-content: space-around;
-            width: 30px;
-            height: 25px;
-            background: transparent;
+        .menu-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
             border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             cursor: pointer;
-            padding: 0;
-            z-index: 10;
-        }
-
-        .hamburger span {
-            width: 100%;
-            height: 3px;
-            background: var(--text-light);
-            border-radius: 5px;
-            transition: var(--transition);
-            position: relative;
-            transform-origin: center;
-        }
-
-        /* 移动端导航菜单 */
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--dark-bg);
-            z-index: 100;
-            flex-direction: column;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: var(--spacing-lg);
-            transform: translateY(-100%);
-            transition: transform 0.4s ease-in-out;
-        }
-
-        .mobile-nav.active {
-            transform: translateY(0);
-        }
-
-        .mobile-nav-links {
-            list-style: none;
-            text-align: center;
-            width: 100%;
-        }
-
-        .mobile-nav-links li {
-            margin-bottom: var(--spacing-md);
-        }
-
-        .mobile-nav-links a {
-            color: var(--text-light);
-            text-decoration: none;
-            font-size: 1.5rem;
-            padding: 10px 20px;
-            display: block;
-            border-radius: 30px;
             transition: var(--transition);
         }
 
-        .mobile-nav-links a:hover,
-        .mobile-nav-links a.active {
-            background: var(--secondary-gradient);
-        }
-
-        .close-menu {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: var(--text-light);
-            font-size: 2rem;
-            cursor: pointer;
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         /* 头部区域 */
@@ -612,6 +629,7 @@
             padding: var(--spacing-lg) 0;
             color: var(--text-muted);
             animation: fadeIn 1s ease forwards;
+            margin-top: auto;
         }
 
         .friend-links {
@@ -685,18 +703,6 @@
                 font-size: 1.2rem;
             }
 
-            .nav-links {
-                display: none;
-            }
-
-            .hamburger {
-                display: flex;
-            }
-
-            .mobile-nav {
-                display: flex;
-            }
-
             .resource-header {
                 flex-direction: column;
                 text-align: center;
@@ -738,6 +744,10 @@
             .back-btn {
                 padding: 6px 12px;
                 font-size: 0.9rem;
+            }
+
+            .sidebar-nav {
+                width: 80%;
             }
         }
 
@@ -802,19 +812,58 @@
             outline: 2px solid var(--accent-color);
             outline-offset: 2px;
         }
+
+        /* 内容覆盖层 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
     </style>
 
     {% block extra_head %}{% endblock %}
 </head>
 <body>
+    <!-- 导航覆盖层 -->
+    <div class="overlay" id="nav-overlay"></div>
+
+    <!-- 右侧边栏导航 -->
+    <nav class="sidebar-nav" id="sidebar-nav">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">{{ Site_Information.Site_title }}</div>
+            <button class="close-sidebar" id="close-sidebar">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul class="sidebar-links">
+            <li><a href="/" class="{% if request.path == '/' %}active{% endif %}"><i class="fas fa-home"></i> 首页</a></li>
+            <!-- 可以添加更多导航链接 -->
+            <li><a href="https://github.com/3078363489/Quark_Magnet_Search/"><i class="fas fa-fire"></i> 本网站相同源码</a></li>
+
+        </ul>
+        <div class="sidebar-footer">
+            © 2024 {{ Site_Information.Site_title }}
+        </div>
+    </nav>
+
     <div class="container">
-        <!-- 导航栏 -->
+        <!-- 顶部导航栏 -->
         <nav class="main-nav">
             <div class="nav-left">
                 <div class="nav-logo">{{ Site_Information.Site_title }}</div>
-                <ul class="nav-links">
-                    <li><a href="/" class="{% if request.path == '/' %}active{% endif %}"><i class="fas fa-home"></i> 首页</a></li>
-                </ul>
             </div>
             <div class="nav-right">
                 {% if request.path != '/' %}
@@ -822,24 +871,11 @@
                     <i class="fas fa-arrow-left"></i> 返回
                 </button>
                 {% endif %}
-                <button class="hamburger" id="hamburger-menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </nav>
-
-        <!-- 移动端导航菜单 -->
-        <div class="mobile-nav" id="mobile-nav">
-            <button class="close-menu" id="close-menu">
-                <i class="fas fa-times"></i>
-            </button>
-            <ul class="mobile-nav-links">
-                <li><a href="/" class="{% if request.path == '/' %}active{% endif %}"><i class="fas fa-home"></i> 首页</a></li>
-                <!-- 可以添加更多移动端导航链接 -->
-            </ul>
-        </div>
 
         <!-- 头部区域 -->
         <header class="header">
@@ -873,10 +909,8 @@
             </div>
             <div class="icp-info">
                 © 2024 {{ Site_Information.Site_title }}{% if Site_Information.for_the_record %}  | <a class="friend-link" href="https://beian.miit.gov.cn" target="_blank" rel="noreferrer nofollow">{{ Site_Information.for_the_record }}</a>
-
                 {% endif %}
             </div>
-
         </footer>
     </div>
     {{ Site_Information.footer_content |safe}}
@@ -888,27 +922,33 @@
             window.history.back();
         }
 
-        // 移动端菜单功能
+        // 右侧边栏导航功能
         document.addEventListener('DOMContentLoaded', function() {
-            const hamburger = document.getElementById('hamburger-menu');
-            const mobileNav = document.getElementById('mobile-nav');
-            const closeMenu = document.getElementById('close-menu');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebarNav = document.getElementById('sidebar-nav');
+            const closeSidebar = document.getElementById('close-sidebar');
+            const navOverlay = document.getElementById('nav-overlay');
 
-            hamburger.addEventListener('click', function() {
-                mobileNav.classList.add('active');
-                document.body.style.overflow = 'hidden'; // 防止背景滚动
-            });
+            function openSidebar() {
+                sidebarNav.classList.add('active');
+                navOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
 
-            closeMenu.addEventListener('click', function() {
-                mobileNav.classList.remove('active');
-                document.body.style.overflow = ''; // 恢复滚动
-            });
+            function closeSidebarFunc() {
+                sidebarNav.classList.remove('active');
+                navOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
 
-            // 点击菜单外区域关闭菜单
-            mobileNav.addEventListener('click', function(e) {
-                if (e.target === mobileNav) {
-                    mobileNav.classList.remove('active');
-                    document.body.style.overflow = '';
+            menuToggle.addEventListener('click', openSidebar);
+            closeSidebar.addEventListener('click', closeSidebarFunc);
+            navOverlay.addEventListener('click', closeSidebarFunc);
+
+            // 按ESC键关闭侧边栏
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeSidebarFunc();
                 }
             });
         });
