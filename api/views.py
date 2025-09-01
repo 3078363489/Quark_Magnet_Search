@@ -99,7 +99,11 @@ class ArticleAPIView(View):
         article_type_id = data.get('type')
         link = data.get('link')
         tags_input = data.get('tags', '')  # 接收字符串而不是列表
-
+        if Article.objects.get(title=title):#标题重复返回400
+            return JsonResponse(
+                {'error': 'Article with this title already exists'},
+                status=400
+            )
         # 验证必填字段
         required_fields = ['title', 'content', 'author', 'type', 'link']
         for field in required_fields:
