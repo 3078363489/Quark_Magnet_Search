@@ -20,6 +20,7 @@ class SiteConfigAdmin(admin.ModelAdmin):
 
 
 class ArticleForm(forms.ModelForm):
+    list_per_page = 20
     tags_input = forms.CharField(
         label='标签',
         required=False,
@@ -86,6 +87,7 @@ class ArticleForm(forms.ModelForm):
 
 
 class ArticleAdmin(admin.ModelAdmin):
+    list_per_page = 20
     form = ArticleForm
 
     list_display = [
