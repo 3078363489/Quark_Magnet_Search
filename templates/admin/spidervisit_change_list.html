@@ -1,0 +1,50 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block content %}
+<div id="content-main">
+    <div class="module">
+        <h2>搜索引擎爬虫访问统计</h2>
+        <div style="display: flex; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px; margin-right: 20px;">
+                <canvas id="spiderChart" width="400" height="300"></canvas>
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                {{ block.super }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('spiderChart').getContext('2d');
+    const chartData = {{ chart_data|safe }};
+    
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                data: chartData.data,
+                backgroundColor: chartData.backgroundColors,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                },
+                title: {
+                    display: true,
+                    text: '搜索引擎爬虫分布'
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

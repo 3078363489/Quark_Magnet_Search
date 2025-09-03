@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}404页面 - {{ Site_Information.Site_title }}{% endblock %}
+{% block content %}
+<style>
+        /* 404内容区域 */
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex: 1;
+            padding: var(--spacing-lg) 0;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: bold;
+            background: var(--secondary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: var(--spacing-sm);
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            line-height: 1;
+        }
+
+        .error-title {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-md);
+            color: var(--text-light);
+        }
+
+        .error-message {
+            max-width: 600px;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+
+    </style>
+
+
+
+
+        <!-- 404内容区域 -->
+        <main class="error-container">
+            <div class="error-code">404</div>
+            <h1 class="error-title">哎呀！页面找不到了</h1>
+            <p class="error-message">
+                您访问的页面可能已被移除、暂时不可用或地址输入错误。
+                请检查URL是否正确，或使用下面的搜索功能查找您需要的资源。
+            </p>
+
+        </main>
+{% endblock %}
