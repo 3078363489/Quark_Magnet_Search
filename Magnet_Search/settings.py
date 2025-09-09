@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for Magnet_Search project.
 
@@ -23,15 +24,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-awjw^s9h2as3!n+e$&8u4^l@ld%w2kt@x2u2!oihf%-9=we_t7"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG =True
 
 ALLOWED_HOSTS = ['*']#指定自己域名
 CSRF_TRUSTED_ORIGINS = [
      'http://quark.marketingw.cn',
 ]
-
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -43,7 +42,9 @@ INSTALLED_APPS = [
     "quark",
     "api",
     "Seo_Spider",
+    'installer',
 ]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -55,6 +56,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'Seo_Spider.middleware.SpiderDetectionMiddleware',
+    'installer.middleware.InstallationMiddleware',
 ]
 
 ROOT_URLCONF = "Magnet_Search.urls"
@@ -84,24 +86,12 @@ WSGI_APPLICATION = "Magnet_Search.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
-
     'default': {
-
-        'ENGINE': 'django.db.backends.mysql',  # 默认
-
-        'NAME': 'magnet_Search',  # 连接的数据库 #一定要存在的数据库名
-
-        'HOST': '127.0.0.1',  # mysql的ip地址
-
-        'PORT': 3306,  # mysql的端口
-
-        'USER': 'root',  # mysql的用户名
-
-        'PASSWORD': '12345678'  # mysql的密码
-
-    }}
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'temp_install_db.sqlite3',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -150,4 +140,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # settings.py
 QUARK_CK_DEFAULT_FID = "default_fid_value"  # 全局默认fid
-MAX_CK_LENGTH = 2000  # 全局CK最大长度
+
