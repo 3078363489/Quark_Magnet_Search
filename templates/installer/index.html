@@ -1,0 +1,633 @@
+<!-- templates/installer/index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django 网站安装向导</title>
+    <style>
+        /* 保持原有的CSS样式不变 */
+        :root {
+            --primary: #4A90E2;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .progress-container {
+            background: #e9ecef;
+            height: 10px;
+            width: 100%;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .steps {
+            padding: 30px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background: #357ebd;
+        }
+
+        button.btn-success {
+            background: var(--success);
+        }
+
+        button.btn-success:hover {
+            background: #218838;
+        }
+
+        button.btn-danger {
+            background: var(--danger);
+        }
+
+        button.btn-danger:hover {
+            background: #c82333;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .requirements {
+            list-style: none;
+        }
+
+        .requirements li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .requirement-status {
+            float: right;
+            font-weight: bold;
+        }
+
+        .success { color: var(--success); }
+        .error { color: var(--danger); }
+        .warning { color: var(--warning); }
+
+        .log-container {
+            background: #2b303b;
+            color: #dee2e6;
+            padding: 15px;
+            border-radius: 4px;
+            height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>夸克磁力搜网站安装向导</h1>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="steps">
+            <!-- 步骤1: 欢迎页面 -->
+            <div class="step active" id="step1">
+                <h2>欢迎使用安装向导</h2>
+                <p>本向导将帮助您完成磁力搜索网站的安装和配置。</p>
+                <p>在开始之前，请确保您已准备好MySQL数据库的连接信息。</p>
+
+                <div class="navigation">
+                    <div></div> <!-- 空占位符用于对齐 -->
+                    <button onclick="nextStep()">开始安装</button>
+                </div>
+            </div>
+
+            <!-- 步骤2: 环境检查 -->
+            <div class="step" id="step2">
+                <h2>环境检查</h2>
+                <p>正在检查系统环境是否符合要求...</p>
+
+                <ul class="requirements" id="requirementsList">
+                    <li>Python 3.8+ <span class="requirement-status" id="pythonCheck">待检查</span></li>
+                    <li>Django 3.0+ <span class="requirement-status" id="djangoCheck">待检查</span></li>
+                    <li>MySQL 客户端 <span class="requirement-status" id="mysqlCheck">待检查</span></li>
+                </ul>
+
+                <div class="navigation">
+                    <button onclick="prevStep()">上一步</button>
+                    <button onclick="checkEnvironment()">检查环境</button>
+                    <button onclick="nextStep()" id="nextStep2" disabled>下一步</button>
+                </div>
+            </div>
+
+            <!-- 步骤3: 数据库配置 -->
+            <div class="step" id="step3">
+                <h2>数据库配置</h2>
+                <p>请输入MySQL数据库连接信息：</p>
+
+                <div class="form-group">
+                    <label for="dbHost">数据库主机</label>
+                    <input type="text" id="dbHost" value="localhost">
+                </div>
+
+                <div class="form-group">
+                    <label for="dbPort">端口</label>
+                    <input type="text" id="dbPort" value="3306">
+                </div>
+
+                <div class="form-group">
+                    <label for="dbName">数据库名称</label>
+                    <input type="text" id="dbName" placeholder="请输入数据库名称">
+                </div>
+
+                <div class="form-group">
+                    <label for="dbUser">用户名</label>
+                    <input type="text" id="dbUser" value="root">
+                </div>
+
+                <div class="form-group">
+                    <label for="dbPassword">密码</label>
+                    <input type="password" id="dbPassword" placeholder="请输入数据库密码">
+                </div>
+
+                <div id="dbError" class="alert alert-danger" style="display: none;"></div>
+
+                <div class="navigation">
+                    <button onclick="prevStep()">上一步</button>
+                    <button onclick="testDbConnection()">测试连接</button>
+                    <button onclick="saveDbConfig()" id="nextStep3" disabled>保存并继续</button>
+                </div>
+            </div>
+            <!-- 步骤5: 安装 -->
+            <div class="step" id="step4">
+                <h2>安装进行中</h2>
+                <p>正在执行安装操作，请稍候...</p>
+
+                <div class="log-container" id="installLog">
+                    <div>准备开始安装...</div>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevStep()">上一步</button>
+                    <button onclick="runMigrations()" id="runMigrationsBtn">执行数据库迁移</button>
+                    <button onclick="nextStep()" id="nextStep5" disabled>下一步</button>
+                </div>
+            </div>
+            <!-- 步骤4: 管理员账户 -->
+            <div class="step" id="step5">
+                <h2>创建管理员账户</h2>
+                <p>请设置网站的管理员账户信息：</p>
+
+                <div class="form-group">
+                    <label for="adminUser">用户名</label>
+                    <input type="text" id="adminUser" value="admin">
+                </div>
+
+                <div class="form-group">
+                    <label for="adminEmail">电子邮箱</label>
+                    <input type="text" id="adminEmail" value="admin@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="adminPassword">密码</label>
+                    <input type="password" id="adminPassword">
+                </div>
+
+                <div class="form-group">
+                    <label for="adminPasswordConfirm">确认密码</label>
+                    <input type="password" id="adminPasswordConfirm">
+                </div>
+
+                <div id="adminError" class="alert alert-danger" style="display: none;"></div>
+
+                <div class="navigation">
+                    <button onclick="prevStep()">上一步</button>
+                    <button onclick="createAdmin()">创建管理员</button>
+                    <button onclick="nextStep()" id="nextStep4" disabled>下一步</button>
+                </div>
+            </div>
+
+            <!-- 步骤6: 完成 -->
+            <div class="step" id="step6">
+                <h2>安装完成</h2>
+
+                <div class="alert alert-success">
+                    <p>恭喜！磁力搜索网站已成功安装并配置完成。</p>
+                </div>
+
+                <p>您现在可以：</p>
+                <ul>
+                    <li>访问管理员后台域名/admin</li>
+                    <li></li>
+                </ul>
+
+                <div class="alert alert-info">
+                    <p>出于安全考虑，请您您删除安装程序。</p>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevStep()">上一步</button>
+                    <button class="btn-danger" onclick="completeInstallation()">完成安装并删除安装程序</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 6;
+
+        // 更新进度条
+        function updateProgressBar() {
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // 显示指定步骤
+        function showStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+
+            document.getElementById('step' + stepNumber).classList.add('active');
+            currentStep = stepNumber;
+            updateProgressBar();
+        }
+
+        // 下一步
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                showStep(currentStep + 1);
+            }
+        }
+
+        // 上一步
+        function prevStep() {
+            if (currentStep > 1) {
+                showStep(currentStep - 1);
+            }
+        }
+
+        // 检查环境要求
+        function checkEnvironment() {
+            fetch('{% url "installer:check_environment" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 更新检查结果
+                document.getElementById('pythonCheck').textContent = data.python ? '✓' : '✗';
+                document.getElementById('pythonCheck').className = 'requirement-status ' + (data.python ? 'success' : 'error');
+
+                document.getElementById('djangoCheck').textContent = data.django ? '✓' : '✗';
+                document.getElementById('djangoCheck').className = 'requirement-status ' + (data.django ? 'success' : 'error');
+
+                document.getElementById('mysqlCheck').textContent = data.mysql ? '✓' : '✗';
+                document.getElementById('mysqlCheck').className = 'requirement-status ' + (data.mysql ? 'success' : 'error');
+
+
+
+                // 启用下一步按钮
+                document.getElementById('nextStep2').disabled = !(data.python && data.django && data.mysql);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // 测试数据库连接
+        function testDbConnection() {
+            const dbHost = document.getElementById('dbHost').value;
+            const dbPort = document.getElementById('dbPort').value;
+            const dbName = document.getElementById('dbName').value;
+            const dbUser = document.getElementById('dbUser').value;
+            const dbPassword = document.getElementById('dbPassword').value;
+
+            // 隐藏之前的错误信息
+            document.getElementById('dbError').style.display = 'none';
+
+            fetch('{% url "installer:test_db_connection" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    host: dbHost,
+                    port: dbPort,
+                    name: dbName,
+                    user: dbUser,
+                    password: dbPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 启用保存按钮
+                    document.getElementById('nextStep3').disabled = false;
+                    alert('数据库连接成功！');
+                } else {
+                    // 显示错误信息
+                    document.getElementById('dbError').textContent = '连接失败: ' + data.error;
+                    document.getElementById('dbError').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('dbError').textContent = '发生错误: ' + error;
+                document.getElementById('dbError').style.display = 'block';
+            });
+        }
+
+        // 保存数据库配置
+        function saveDbConfig() {
+            const dbHost = document.getElementById('dbHost').value;
+            const dbPort = document.getElementById('dbPort').value;
+            const dbName = document.getElementById('dbName').value;
+            const dbUser = document.getElementById('dbUser').value;
+            const dbPassword = document.getElementById('dbPassword').value;
+
+            fetch('{% url "installer:save_db_config" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    host: dbHost,
+                    port: dbPort,
+                    name: dbName,
+                    user: dbUser,
+                    password: dbPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    nextStep();
+                } else {
+                    alert('保存配置失败: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('保存配置时发生错误: ' + error);
+            });
+        }
+
+        // 创建管理员账户
+        function createAdmin() {
+            const adminUser = document.getElementById('adminUser').value;
+            const adminEmail = document.getElementById('adminEmail').value;
+            const adminPassword = document.getElementById('adminPassword').value;
+            const adminPasswordConfirm = document.getElementById('adminPasswordConfirm').value;
+
+            // 隐藏之前的错误信息
+            document.getElementById('adminError').style.display = 'none';
+
+            // 验证密码是否匹配
+            if (adminPassword !== adminPasswordConfirm) {
+                document.getElementById('adminError').textContent = '密码不匹配';
+                document.getElementById('adminError').style.display = 'block';
+                return;
+            }
+
+            fetch('{% url "installer:create_admin" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    username: adminUser,
+                    email: adminEmail,
+                    password: adminPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('nextStep4').disabled = false;
+                    nextStep();
+                } else {
+                    document.getElementById('adminError').textContent = '创建管理员失败: ' + data.error;
+                    document.getElementById('adminError').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('adminError').textContent = '创建管理员时发生错误: ' + error;
+                document.getElementById('adminError').style.display = 'block';
+            });
+        }
+
+        // 执行数据库迁移
+        function runMigrations() {
+            const logContainer = document.getElementById('installLog');
+            const runBtn = document.getElementById('runMigrationsBtn');
+            const nextBtn = document.getElementById('nextStep5');
+
+            runBtn.disabled = true;
+
+            // 添加日志条目
+            function addLog(message) {
+                const logEntry = document.createElement('div');
+                logEntry.textContent = message;
+                logContainer.appendChild(logEntry);
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+
+            addLog('开始执行数据库迁移...');
+
+            fetch('{% url "installer:run_migrations" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    addLog('数据库迁移成功完成!');
+                    addLog(data.output);
+                    nextBtn.disabled = false;
+                    nextStep();
+                } else {
+                    addLog('数据库迁移失败: ' + data.error);
+                    runBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                addLog('执行迁移时发生错误: ' + error);
+                runBtn.disabled = false;
+            });
+        }
+
+        // 完成安装并删除安装程序
+        function completeInstallation() {
+            if (confirm('确定要完成安装并删除安装程序吗？此操作不可恢复。')) {
+                fetch('{% url "installer:complete_installation" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('安装已完成！安装程序已被删除。');
+                        window.location.href = '/';
+                    } else {
+                        alert('完成安装时发生错误: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('完成安装时发生错误: ' + error);
+                });
+            }
+        }
+
+        // 获取CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // 初始化
+        updateProgressBar();
+    </script>
+</body>
+</html>
