@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-awjw^s9h2as3!n+e$&8u4^l@ld%w2kt@x2u2!oihf%-9=we_t7"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG =True
+DEBUG =False
 
 ALLOWED_HOSTS = ['*']#指定自己域名
 CSRF_TRUSTED_ORIGINS = [
@@ -140,4 +140,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # settings.py
 QUARK_CK_DEFAULT_FID = "default_fid_value"  # 全局默认fid
+
 
