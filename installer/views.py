@@ -138,14 +138,32 @@ class CreateAdminView(View):
         data = json.loads(request.body)
 
         try:
-            # 创建超级用户
-            user = User.objects.create_superuser(
-                username=data.get('username'),
-                email=data.get('email'),
-                password=data.get('password')
-            )
-            InstallationStatus.objects.create(completed=True)
-            return JsonResponse({'success': True})
+            # 使用子进程创建超级用户
+            env = os.environ.copy()
+            env['DJANGO_SUPERUSER_USERNAME'] = data.get('username')
+            env['DJANGO_SUPERUSER_EMAIL'] = data.get('email')
+            env['DJANGO_SUPERUSER_PASSWORD'] = data.get('password')
+
+            result = subprocess.run([
+                'python', os.path.join(settings.BASE_DIR, 'manage.py'), 'createsuperuser',
+                '--noinput'
+            ], env=env, capture_output=True, text=True, cwd=settings.BASE_DIR)
+
+            if result.returncode == 0:
+                InstallationStatus.objects.create(completed=True)
+                return JsonResponse({'success': True})
+            else:
+                # 如果用户已存在，尝试非交互式创建
+                try:
+                    user = User.objects.create_superuser(
+                        username=data.get('username'),
+                        email=data.get('email'),
+                        password=data.get('password')
+                    )
+                    InstallationStatus.objects.create(completed=True)
+                    return JsonResponse({'success': True})
+                except:
+                    return JsonResponse({'success': False, 'error': result.stderr})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
 
