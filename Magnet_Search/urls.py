@@ -16,10 +16,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from . import views
+from django.conf import settings
+from django.conf.urls import handler404, handler500
+handler404 = views.custom_404
+handler500=views.page_error
+def get_urlpatterns():
+    patterns = [
+        path("admin/", admin.site.urls),
+        path('',include('article.urls'),name='article'),
 
-urlpatterns = [
-    path("admin/", admin.site.urls),
-    path('',include('article.urls'),name='article'),
-    path("quark/",include('quark.urls'),name='quark'),
-    path("api/",include('api.urls'),name='api'),
-]
+        path("quark/",include('quark.urls'),name='quark'),
+        path("api/",include('api.urls'),name='api'),
+    ]
+    if 'installer' in settings.INSTALLED_APPS:
+        patterns.append(path('install/', include('installer.urls'), name='installer'))
+
+    return patterns
+urlpatterns = get_urlpatterns()
