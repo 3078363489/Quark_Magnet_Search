@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.urls import path
 from django.shortcuts import render
 from django.db.models import Count
-from django.utils.html import format_html
+from django.utils import timezone
 from .models import SpiderVisit
 import json
 
@@ -24,7 +24,9 @@ class SpiderVisitAdmin(admin.ModelAdmin):
 
     def changelist_view(self, request, extra_context=None):
         # 准备图表数据
-        stats = SpiderVisit.objects.values('search_engine').annotate(
+        today=timezone.now().date()
+        stats = SpiderVisit.objects.filter(
+                    visit_time__date=today).values('search_engine').annotate(
             count=Count('id')
         ).order_by('-count')
 
@@ -52,7 +54,10 @@ class SpiderVisitAdmin(admin.ModelAdmin):
 
     def chart_data(self, request):
         # 提供图表数据的API端点
-        stats = SpiderVisit.objects.values('search_engine').annotate(
+
+        today = timezone.now().date()
+        stats = SpiderVisit.objects.filter(
+            visit_time__date=today).values('search_engine').annotate(
             count=Count('id')
         ).order_by('-count')
 
