@@ -1,0 +1,29 @@
+services:
+  magnet-search:
+    build: .
+    container_name: magnet-search-app  # 容器名称
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DEBUG=0
+    volumes:
+      - ./:/var/www/html/Magnet_Search
+    networks:
+      - app-network
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 如果有其他服务，也可以为它们命名
+
+volumes:
+  static_volume:
+
+networks:
+  app-network:
+    driver: bridge
