@@ -51,7 +51,7 @@ docker pull crpi-wybia4136gb7z3no.cn-hangzhou.personal.cr.aliyuncs.com/magnet-se
     
 - 🔎 **SEO优化** - 搜索引擎友好，支持站点地图
 
-## 用户名 admin 密码admin123456
+
 
 ## 技术栈
 
