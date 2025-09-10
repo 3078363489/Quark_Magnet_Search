@@ -12,7 +12,9 @@ from django.db import connection
 from django.contrib.auth.models import User
 from .models import InstallationStatus
 import re
-
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+@method_decorator(csrf_exempt, name='dispatch')
 class InstallerView(TemplateView):
     template_name = 'installer/index.html'
 
@@ -21,7 +23,7 @@ class InstallerView(TemplateView):
         context['step'] = self.request.GET.get('step', '1')
         return context
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class CheckEnvironmentView(View):
     def post(self, request):
         # 检查环境要求
@@ -54,7 +56,7 @@ class CheckEnvironmentView(View):
             except:
                 return False
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class TestDBConnectionView(View):
     def post(self, request):
         data = json.loads(request.body)
@@ -74,7 +76,7 @@ class TestDBConnectionView(View):
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class SaveDBConfigView(View):
     def post(self, request):
         data = json.loads(request.body)
@@ -112,7 +114,7 @@ DATABASES = {{
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class RunMigrationsView(View):
     def post(self, request):
         try:
@@ -132,7 +134,7 @@ class RunMigrationsView(View):
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class CreateAdminView(View):
     def post(self, request):
         data = json.loads(request.body)
@@ -167,7 +169,7 @@ class CreateAdminView(View):
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class CompleteInstallationView(View):
     def post(self, request):
         try:
