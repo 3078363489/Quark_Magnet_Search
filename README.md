@@ -7,7 +7,10 @@
 ---
 
 **免责声明**：本项目由 deepseek 辅助编写。由于时间有限，仅在空闲时维护。如遇使用问题，请优先自行排查，感谢理解！
-
+## 安装教程 
+https://www.bilibili.com/video/BV1vzHUziENw/?vd_source=d7d7f4da6f96839c46dd2dcca85d2f15  
+补充:
+https://www.bilibili.com/video/BV1YyHUzAE3k/
 # V1.2.1版本更新
 - 修复了蜘蛛统计插件列表展示过多问题
 - 修复了quark_cookie长度限制问题
