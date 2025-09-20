@@ -11,6 +11,24 @@
 https://www.bilibili.com/video/BV1vzHUziENw/?vd_source=d7d7f4da6f96839c46dd2dcca85d2f15  
 补充:
 https://www.bilibili.com/video/BV1YyHUzAE3k/
+# V1.3.1版本更新
+- 优化了搜索功能
+- 增加redis缓存功能(可自选是否使用，不填默认不用)
+使用方法在Magnet_Search/settings.py的INSTALLED_APPS 之前添加以下配置
+```shell
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/3",  # Redis 服务器地址和数据库编号 默认有0-15个随便填写,docker部署的则改为redis://host.docker.internal:6379/3
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PARSER_CLASS": "redis.connection.HiredisParser",
+            "PASSWORD": "1314521",  # 如果 Redis 设置了密码
+        },
+        "KEY_PREFIX": "search"  # 键前缀，用于区分不同项目的缓存
+    }
+}
+```
 # V1.2.1版本更新
 - 修复了蜘蛛统计插件列表展示过多问题
 - 修复了quark_cookie长度限制问题
