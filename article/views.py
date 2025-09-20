@@ -1,18 +1,21 @@
-from django.http import HttpResponse
-from django.urls import reverse
-from django.utils.timezone import get_current_timezone
 from django.views import View
 from .models import Article,Article_type,Downloads,SiteConfig
 from django.db.models import Prefetch
 from django.shortcuts import render, get_object_or_404
-# Create your views here.
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import models
 from django.http import JsonResponse
 from django.db.models import Q, F
 from datetime import timedelta
 from django.utils import timezone
-from django.conf import settings
+from django.http import HttpResponse
+from django.urls import reverse
+from .models import Article, SiteConfig
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.utils.timezone import get_current_timezone
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 class Article_indexView(View):
     def get(self,request):
         types = Article_type.objects.prefetch_related(
@@ -35,14 +38,22 @@ class Article_indexView(View):
 # @method_decorator(cache_page(60 * 15), name='dispatch')  # 缓存15分钟
 class Article_detailView(View):
     def get(self, request, article_id):
-        article = get_object_or_404(
-            Article.objects.select_related('author', 'type'),
-            id=article_id
-        )
-        related_articles = Article.objects.filter(
-            type=article.type
-        ).exclude(id=article_id).order_by('-Create_date')[:5]
-        # 更新访问计数（绕过缓存）
+        print(f"article:{article_id}")
+        article=cache.get(f"article:{article_id}")
+        print(article)
+        if not article:
+            article = get_object_or_404(
+                Article.objects.select_related('author', 'type'),
+                id=article_id
+            )
+            related_articles = Article.objects.filter(
+                type=article.type
+            ).exclude(id=article_id).order_by('-Create_date')[:5]
+            cache.set(f"article:{article_id}", article, timeout=60 * 60)  # 缓存60分钟
+            cache.set(f"related_articles:{article_id}", related_articles, timeout=60 * 60)  # 缓存60分钟
+        else:
+            related_articles = cache.get(f"related_articles:{article_id}")
+
         Article.objects.filter(id=article_id).update(
             view_count=models.F('view_count') + 1
         )
@@ -51,7 +62,6 @@ class Article_detailView(View):
             'article': article,
             'article_type': article.type,
             'related_articles':related_articles
-
         })
 
 
@@ -67,7 +77,6 @@ class ArticleSearchView(View):
             # 使用 MySQL 兼容的搜索
             results = Article.objects.filter(
                 Q(title__icontains=search_term) |
-                Q(content__icontains=search_term) |
                 Q(tags__tag__icontains=search_term)
             ).distinct().order_by('-Create_date')
         else:
@@ -77,7 +86,7 @@ class ArticleSearchView(View):
         results = results.prefetch_related('tags').select_related('type')
         total_count = results.count()
         # 创建分页器
-        paginator = Paginator(results,5)  # 每页10篇文章
+        paginator = Paginator(results,5)  # 每页5篇文章
         page_number = request.GET.get('page')
 
         try:
@@ -166,31 +175,9 @@ class ArticlelistView(View):
         }
         return render(request, 'list.html', context)
 
-    def get_page_range(self, page_obj, paginator, delta=2):
-        """生成智能页码范围，只显示当前页附近的页码"""
-        current_page = page_obj.number
-        total_pages = paginator.num_pages
 
-        # 计算页码范围
-        start = max(1, current_page - delta)
-        end = min(total_pages, current_page + delta) + 1
 
-        # 添加首尾页
-        page_range = []
-        if start > 1:
-            page_range.append(1)
-            if start > 2:
-                page_range.append(None)  # 表示省略号
-
-        page_range.extend(range(start, end))
-
-        if end <= total_pages:
-            if end < total_pages:
-                page_range.append(None)  # 表示省略号
-            page_range.append(total_pages)
-
-        return page_range
-
+@method_decorator(csrf_exempt, name='dispatch')
 def increment_download(request):
     """增加下载计数 (API端点)"""
     # 获取或创建统计记录（放在开头确保stats对象存在）
@@ -223,12 +210,7 @@ def increment_download(request):
     })
 
 
-# views.py
-from django.http import HttpResponse
-from django.urls import reverse
-from .models import Article, SiteConfig
-from datetime import datetime
-from django.utils.timezone import get_current_timezone
+
 
 
 def sitemap_xml(request):
@@ -276,3 +258,5 @@ def sitemap_xml(request):
 
     # 返回XML响应
     return HttpResponse('\n'.join(xml_content), content_type='application/xml')
+
+
