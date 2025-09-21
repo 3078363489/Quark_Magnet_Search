@@ -49,8 +49,8 @@ class Article_detailView(View):
             related_articles = Article.objects.filter(
                 type=article.type
             ).exclude(id=article_id).order_by('-Create_date')[:5]
-            cache.set(f"article:{article_id}", article, timeout=60 * 60)  # 缓存60分钟
-            cache.set(f"related_articles:{article_id}", related_articles, timeout=60 * 60)  # 缓存60分钟
+            cache.set(f"article:{article_id}", article, timeout=60 * 60)  # 缓存15分钟
+            cache.set(f"related_articles:{article_id}", related_articles, timeout=60 * 60)  # 缓存15分钟
         else:
             related_articles = cache.get(f"related_articles:{article_id}")
 
@@ -86,7 +86,7 @@ class ArticleSearchView(View):
         results = results.prefetch_related('tags').select_related('type')
         total_count = results.count()
         # 创建分页器
-        paginator = Paginator(results,5)  # 每页5篇文章
+        paginator = Paginator(results,5)  # 每页10篇文章
         page_number = request.GET.get('page')
 
         try:
@@ -145,6 +145,30 @@ class ArticleSearchView(View):
 
 
 class ArticlelistView(View):
+    def get_page_range(self, page_obj, paginator, delta=2):
+        """生成智能页码范围，只显示当前页附近的页码"""
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+
+        # 计算页码范围
+        start = max(1, current_page - delta)
+        end = min(total_pages, current_page + delta) + 1
+
+        # 添加首尾页
+        page_range = []
+        if start > 1:
+            page_range.append(1)
+            if start > 2:
+                page_range.append(None)  # 表示省略号
+
+        page_range.extend(range(start, end))
+
+        if end <= total_pages:
+            if end < total_pages:
+                page_range.append(None)  # 表示省略号
+            page_range.append(total_pages)
+
+        return page_range
     def get(self, request, category_id, page=1):  # 添加page参数，默认为1
         # 获取分类对象
         category = get_object_or_404(Article_type, id=category_id)
