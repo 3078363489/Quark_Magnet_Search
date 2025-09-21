@@ -11,6 +11,9 @@
 https://www.bilibili.com/video/BV1vzHUziENw/?vd_source=d7d7f4da6f96839c46dd2dcca85d2f15  
 补充:
 https://www.bilibili.com/video/BV1YyHUzAE3k/
+# V1.3.2版本更新
+- 修复文章列表不显示文章问题
+
 # V1.3.1版本更新
 - 优化了搜索功能
 - 增加redis缓存功能(可自选是否使用，不填默认不用)
